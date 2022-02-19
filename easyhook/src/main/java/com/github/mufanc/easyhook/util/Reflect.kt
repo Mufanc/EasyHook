@@ -1,6 +1,7 @@
 package com.github.mufanc.easyhook.util
 
 import com.github.mufanc.easyhook.Globals
+import de.robv.android.xposed.XposedHelpers
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -8,6 +9,18 @@ import java.lang.reflect.Method
 typealias MethodFilter = Method.() -> Boolean
 typealias ConstructorFilter = Constructor<*>.() -> Boolean
 typealias FieldFilter = Field.() -> Boolean
+
+/**
+ * 根据类名和类加载器搜索类
+ * @param name: 完整类名
+ * @param classLoader: 类加载器（可选）
+ */
+fun findClass(
+    name: String,
+    classLoader: ClassLoader = Globals.defaultClassLoader
+): Class<*> {
+    return XposedHelpers.findClass(name, classLoader)
+}
 
 /**
  * 在类中搜索方法
@@ -37,7 +50,7 @@ fun findMethod(
  */
 fun findMethod(
     clazz: String,
-    classLoader: ClassLoader = Globals.lpparam.classLoader,
+    classLoader: ClassLoader = Globals.defaultClassLoader,
     filter: MethodFilter
 ): Method? {
     return findMethod(classLoader.loadClass(clazz), filter)
@@ -68,7 +81,7 @@ fun findMethods(
  */
 fun findMethods(
     clazz: String,
-    classLoader: ClassLoader = Globals.lpparam.classLoader,
+    classLoader: ClassLoader = Globals.defaultClassLoader,
     filter: MethodFilter
 ): Array<Method> {
     return findMethods(classLoader.loadClass(clazz), filter)
@@ -102,7 +115,7 @@ fun findConstructor(
  */
 fun findConstructor(
     clazz: String,
-    classLoader: ClassLoader = Globals.lpparam.classLoader,
+    classLoader: ClassLoader = Globals.defaultClassLoader,
     filter: ConstructorFilter
 ): Constructor<*>? {
     return findConstructor(classLoader.loadClass(clazz), filter)
@@ -133,7 +146,7 @@ fun findConstructors(
  */
 fun findConstructors(
     clazz: String,
-    classLoader: ClassLoader = Globals.lpparam.classLoader,
+    classLoader: ClassLoader = Globals.defaultClassLoader,
     filter: ConstructorFilter
 ): Array<Constructor<*>> {
     return findConstructors(classLoader.loadClass(clazz), filter)
@@ -167,7 +180,7 @@ fun findField(
  */
 fun findField(
     clazz: String,
-    classLoader: ClassLoader = Globals.lpparam.classLoader,
+    classLoader: ClassLoader = Globals.defaultClassLoader,
     filter: FieldFilter
 ): Field? {
     return findField(classLoader.loadClass(clazz), filter)
@@ -198,7 +211,7 @@ fun findFields(
  */
 fun findFields(
     clazz: String,
-    classLoader: ClassLoader = Globals.lpparam.classLoader,
+    classLoader: ClassLoader = Globals.defaultClassLoader,
     filter: FieldFilter
 ): Array<Field> {
     return findFields(classLoader.loadClass(clazz), filter)

@@ -3,8 +3,15 @@ package com.github.mufanc.easyhook
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
-object Globals {
+internal object Globals {
     var TAG = "EasyHook"
-    lateinit var lpparam: XC_LoadPackage.LoadPackageParam
+    var lpparam: XC_LoadPackage.LoadPackageParam? = null
+        set(value) {
+            defaultClassLoader = value!!.classLoader
+            field = value
+        }
+
     lateinit var startupParam: IXposedHookZygoteInit.StartupParam
+
+    lateinit var defaultClassLoader: ClassLoader
 }

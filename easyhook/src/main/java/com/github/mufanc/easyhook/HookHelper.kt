@@ -18,6 +18,10 @@ abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposed
 
     protected val startupParam get() = Globals.startupParam
 
+    fun setDefaultClassLoader(classLoader: ClassLoader) {
+        Globals.defaultClassLoader = classLoader
+    }
+
     final override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         Globals.lpparam = lpparam
         findMethod(Application::class.java) {

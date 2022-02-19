@@ -8,17 +8,6 @@ import java.lang.reflect.Member
 typealias Hooker = (param: XC_MethodHook.MethodHookParam) -> Unit
 
 /**
- * 捕获代码块中的错误，并输出到 Logcat
- */
-fun catch(func: () -> Unit) {
-    try {
-        func()
-    } catch (err: Throwable) {
-        Log.e(err)
-    }
-}
-
-/**
  * Hook 指定方法/构造函数
  * @param param: XC_MethodHook 对象
  */
