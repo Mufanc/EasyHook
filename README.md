@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/Mufanc/EasyHook.svg)](https://jitpack.io/#Mufanc/EasyHook)
+
 # EasyHook
 
 * 让 Xposed 模块开发变得更简单
@@ -8,9 +10,9 @@
 
 ```groovy
 allprojects {
-    ...
+    // ......
     repositories {
-        ...
+        // ......
         maven { url 'https://jitpack.io' }
     }
 }
@@ -18,7 +20,7 @@ allprojects {
 
 ```groovy
 dependencies {
-    ...
+    // ......
     implementation 'com.github.mufanc:EasyHook:<version>'
 }
 ```
