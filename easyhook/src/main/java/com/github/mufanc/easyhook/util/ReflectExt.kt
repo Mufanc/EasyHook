@@ -8,7 +8,7 @@ import de.robv.android.xposed.XposedHelpers
  * @param args: 参数列表...
  * @return 方法的返回值
  */
-fun Any.invokeMethod(name: String, vararg args: Any?): Any? {
+fun Any.callMethod(name: String, vararg args: Any?): Any? {
     return XposedHelpers.callMethod(this, name, *args)
 }
 
@@ -19,8 +19,8 @@ fun Any.invokeMethod(name: String, vararg args: Any?): Any? {
  * @return 方法的返回值
  */
 @Suppress("Unchecked_Cast")
-fun <T> Any.invokeMethodAs(name: String, vararg args: Any?): T? {
-    return invokeMethod(name, *args) as T
+fun <T> Any.callMethodAs(name: String, vararg args: Any?): T? {
+    return callMethod(name, *args) as T
 }
 
 /**
@@ -68,6 +68,27 @@ fun Any.getFieldOrNull(name: String): Any? {
 @Suppress("Unchecked_Cast")
 fun <T> Any.getFieldOrNullAs(name: String): T? {
     return getFieldOrNull(name) as T
+}
+
+/**
+ * 调用类的某个静态方法
+ * @param name: 方法名
+ * @param args: 参数列表...
+ * @return 方法的返回值
+ */
+fun Class<*>.callStaticMethod(name: String, vararg args: Any?): Any? {
+    return XposedHelpers.callStaticMethod(this, name, *args)
+}
+
+/**
+ * 调用类的某个静态方法并将返回值转换为指定类型
+ * @param name: 方法名
+ * @param args: 参数列表...
+ * @return 方法的返回值
+ */
+@Suppress("Unchecked_Cast")
+fun <T> Class<*>.callStaticMethodAs(name: String, vararg args: Any?): T? {
+    return callStaticMethod(name, args) as T
 }
 
 /**
