@@ -37,10 +37,10 @@ object Log {
     }
 
     fun e(message: Any?, err: Throwable? = null) {
-        Log.i(Globals.TAG, "$message", err)
+        Log.e(Globals.TAG, "$message", err)
     }
 
     fun e(err: Throwable, message: Any? = "") {
-        Log.i(Globals.TAG, "$message", err)
+        Log.e(Globals.TAG, "$message", err)
     }
 }
