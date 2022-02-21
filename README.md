@@ -21,7 +21,7 @@ allprojects {
 ```groovy
 dependencies {
     // ......
-    implementation 'com.github.mufanc:EasyHook:<version>'
+    implementation 'com.github.Mufanc:EasyHook:<version>'
 }
 ```
 

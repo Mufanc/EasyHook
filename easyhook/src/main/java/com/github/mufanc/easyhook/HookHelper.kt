@@ -2,6 +2,7 @@ package com.github.mufanc.easyhook
 
 import android.app.Application
 import android.content.Context
+import com.github.mufanc.easyhook.util.Log
 import com.github.mufanc.easyhook.util.beforeCall
 import com.github.mufanc.easyhook.util.findMethod
 import de.robv.android.xposed.IXposedHookLoadPackage
@@ -14,7 +15,7 @@ abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposed
         TAG?.let { Globals.TAG = TAG }
     }
 
-    protected val lpparam get() = Globals.lpparam
+    protected val lpparam get() = Globals.lpparam!!
 
     protected val startupParam get() = Globals.startupParam
 
@@ -26,8 +27,8 @@ abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposed
         Globals.lpparam = lpparam
         findMethod(Application::class.java) {
             parameterCount == 1 && name == "attach"
-        }?.beforeCall {
-            onApplicationAttach((it.thisObject as Context).classLoader)
+        }!!.beforeCall {
+            onApplicationAttach((it.args[0] as Context).classLoader)
         }
         onHandleLoadPackage()
     }
