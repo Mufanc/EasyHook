@@ -28,7 +28,7 @@ abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposed
         findMethod(Application::class.java) {
             parameterCount == 1 && name == "attach"
         }!!.beforeCall {
-            onApplicationAttach((it.args[0] as Context).classLoader)
+            onApplicationAttach(it.args[0] as Context)
         }
         onHandleLoadPackage()
     }
@@ -42,5 +42,5 @@ abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposed
 
     open fun onInitZygote() { }
 
-    open fun onApplicationAttach(classLoader: ClassLoader) { }
+    open fun onApplicationAttach(context: Context) { }
 }

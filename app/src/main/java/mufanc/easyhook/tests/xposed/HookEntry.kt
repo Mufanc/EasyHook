@@ -1,6 +1,7 @@
 package mufanc.easyhook.tests.xposed
 
 import android.app.Activity
+import android.content.Context
 import com.github.mufanc.easyhook.HookHelper
 import com.github.mufanc.easyhook.util.*
 import mufanc.easyhook.tests.ui.MainActivity
@@ -38,7 +39,7 @@ class HookEntry : HookHelper() {
         }
     }
 
-    override fun onApplicationAttach(classLoader: ClassLoader) {
-        Log.i("Test: onApplicationAttach | classloader: $classLoader")
+    override fun onApplicationAttach(context: Context) {
+        Log.i("Test: onApplicationAttach | classloader: ${context.classLoader}")
     }
 }
