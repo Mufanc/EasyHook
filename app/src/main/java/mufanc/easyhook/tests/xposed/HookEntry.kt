@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import com.github.mufanc.easyhook.HookHelper
 import com.github.mufanc.easyhook.util.*
+import mufanc.easyhook.tests.BuildConfig
 import mufanc.easyhook.tests.ui.MainActivity
 import java.util.*
 
@@ -13,11 +14,16 @@ class HookEntry : HookHelper() {
     }
 
     override fun onHandleLoadPackage() {
+        if (lpparam.packageName != BuildConfig.APPLICATION_ID) {
+            return
+        }
+
         Log.i("Test: onHandleLoadPackage | package: ${lpparam.packageName}, process: ${lpparam.processName}")
 
         findMethod(Activity::class.java) {
             name == "onCreate"
         }?.beforeCall {
+            it.thisObject.setExtraField("message", "Test: setExtraField | this message was set in onCreate")
             Log.i("Test: hook Activity#onCreate | activity: ${it.thisObject}")
         }
 
@@ -30,10 +36,11 @@ class HookEntry : HookHelper() {
         findMethod(MainActivity::class.java.name) {
             name == "onResume"
         }?.afterCall {
-            Log.i("Test: getApplication | application: ${Misc.getApplication()}")
+            Log.i("Test: getApplication | application: ${ContextUtils.getApplication()}")
+            Log.i(it.thisObject.getExtraField("message"))
             Timer().schedule(object : TimerTask() {
                 override fun run() {
-                    Log.i("Test: getCurrentActivity | activity: ${Misc.getCurrentActivity()}")
+                    Log.i("Test: getCurrentActivity | activity: ${ContextUtils.getCurrentActivity()}")
                 }
             }, 3000)
         }

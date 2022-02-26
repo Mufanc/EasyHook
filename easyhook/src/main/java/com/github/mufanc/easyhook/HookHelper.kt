@@ -2,12 +2,10 @@ package com.github.mufanc.easyhook
 
 import android.app.Application
 import android.content.Context
-import com.github.mufanc.easyhook.util.Log
 import com.github.mufanc.easyhook.util.beforeCall
 import com.github.mufanc.easyhook.util.findMethod
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
-import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposedHookZygoteInit {

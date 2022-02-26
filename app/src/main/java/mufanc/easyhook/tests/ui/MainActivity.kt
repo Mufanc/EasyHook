@@ -1,8 +1,8 @@
 package mufanc.easyhook.tests.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import mufanc.easyhook.tests.R
 
 class MainActivity : AppCompatActivity() {
