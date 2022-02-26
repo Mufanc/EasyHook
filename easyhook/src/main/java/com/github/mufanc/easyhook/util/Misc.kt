@@ -15,26 +15,3 @@ fun catch(func: () -> Unit) {
     }
 }
 
-
-object Misc {
-
-    private val ActivityThread by lazy { findClass("android.app.ActivityThread") }
-
-    private fun currentActivityThread(): Any {
-        return ActivityThread.callStaticMethod("currentActivityThread")!!
-    }
-
-    fun getCurrentActivity(): Activity? {
-        val mActivities = currentActivityThread().getField("mActivities") as ArrayMap<*, *>
-        mActivities.values.forEach {
-            if (!it.getFieldAs<Boolean>("paused")!!) {
-                return it.getFieldAs("activity")
-            }
-        }
-        return null
-    }
-
-    fun getApplication(): Application {
-        return currentActivityThread().callMethodAs<Application>("getApplication")!!
-    }
-}
