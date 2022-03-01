@@ -59,8 +59,8 @@ class HookEntry : HookHelper("CustomTAG") {
     override fun onHandleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         findMethod(Activity::class.java) {
             name == "onCreate"
-        }.afterCall {
-            Log.i("Activity created!")
+        }.hook {
+            after { Log.i("Activity created!") }
         }
     }
 }

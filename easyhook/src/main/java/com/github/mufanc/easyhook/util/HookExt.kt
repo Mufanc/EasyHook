@@ -5,56 +5,50 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XCallback
 import java.lang.reflect.Member
 
-typealias Hooker = (param: XC_MethodHook.MethodHookParam) -> Unit
+
+private typealias Callback = (param: XC_MethodHook.MethodHookParam) -> Any?
+
+class Hooker(priority: Int) : XC_MethodHook(priority) {
+
+    private var replaced = false
+
+    private lateinit var beforeCall: Callback
+    private lateinit var afterCall: Callback
+
+    override fun beforeHookedMethod(param: MethodHookParam) {
+        if (this::beforeCall.isInitialized) {
+            beforeCall(param).let {
+                if (replaced) param.result = it
+            }
+        }
+    }
+
+    override fun afterHookedMethod(param: MethodHookParam) {
+        if (this::afterCall.isInitialized) afterCall(param)
+    }
+
+    fun before(callback: Callback) {
+        beforeCall = callback
+    }
+
+    fun after(callback: Callback) {
+        afterCall = callback
+    }
+
+    fun replace(callback: Callback) {
+        before(callback)
+        replaced = true
+    }
+}
 
 /**
  * Hook 指定方法/构造函数
- * @param param: XC_MethodHook 对象
- */
-fun Member.hookMethod(param: XC_MethodHook) {
-    XposedBridge.hookMethod(this, param)
-}
-
-/**
- * 在指定方法/构造函数执行前插入 Hook
  * @param priority: 优先级
- * @param func: 钩子函数的具体实现
+ * @param handler: 捕获器
  */
-fun Member.beforeCall(
+fun Member.hook(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    func: Hooker
+    handler: Hooker.() -> Unit
 ) {
-    hookMethod(object : XC_MethodHook(priority) {
-        override fun beforeHookedMethod(param: MethodHookParam) {
-            catch { func(param) }
-        }
-    })
-}
-
-/**
- * 在指定方法/构造函数执行后插入 Hook
- * @param priority: 优先级
- * @param func: 钩子函数的具体实现
- */
-fun Member.afterCall(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    func: Hooker
-) {
-    hookMethod(object : XC_MethodHook(priority) {
-        override fun afterHookedMethod(param: MethodHookParam) {
-            catch { func(param) }
-        }
-    })
-}
-
-/**
- * 替换指定方法/构造函数为给定的函数
- * @param func: 用于替换的函数
- */
-fun Member.replaceWith(func: (param: XC_MethodHook.MethodHookParam) -> Any?) {
-    hookMethod(object : XC_MethodHook() {
-        override fun beforeHookedMethod(param: MethodHookParam) {
-            catch { param.result = func(param) }
-        }
-    })
+    XposedBridge.hookMethod(this, Hooker(priority).apply(handler))
 }

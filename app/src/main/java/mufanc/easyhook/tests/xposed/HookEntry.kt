@@ -22,27 +22,31 @@ class HookEntry : HookHelper() {
 
         findMethod(Activity::class.java) {
             name == "onCreate"
-        }?.beforeCall {
-            it.thisObject.setExtraField("message", "Test: setExtraField | this message was set in onCreate")
-            Log.i("Test: hook Activity#onCreate | activity: ${it.thisObject}")
+        }!!.hook {
+            before {
+                it.thisObject.setExtraField("message", "Test: setExtraField | this message was set in onCreate")
+                Log.i("Test: hook Activity#onCreate | activity: ${it.thisObject}")
+            }
         }
 
         findMethod(MainActivity::class.java.name) {
             name == "getToastText"
-        }?.replaceWith {
-            "Replaced!!"
+        }!!.hook {
+            replace { "Replaced!!" }
         }
 
         findMethod(MainActivity::class.java.name) {
             name == "onResume"
-        }?.afterCall {
-            Log.i("Test: getApplication | application: ${ContextUtils.getApplication()}")
-            Log.i(it.thisObject.getExtraField("message"))
-            Timer().schedule(object : TimerTask() {
-                override fun run() {
-                    Log.i("Test: getCurrentActivity | activity: ${ContextUtils.getCurrentActivity()}")
-                }
-            }, 3000)
+        }!!.hook {
+            after {
+                Log.i("Test: getApplication | application: ${ContextUtils.getApplication()}")
+                Log.i(it.thisObject.getExtraField("message"))
+                Timer().schedule(object : TimerTask() {
+                    override fun run() {
+                        Log.i("Test: getCurrentActivity | activity: ${ContextUtils.getCurrentActivity()}")
+                    }
+                }, 2000)
+            }
         }
     }
 

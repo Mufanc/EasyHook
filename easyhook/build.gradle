@@ -51,7 +51,7 @@ afterEvaluate {
 }
 
 def getVersionName(String command) {
-    def version = '0.4.' + command.execute().text.trim()
+    def version = '0.5.' + command.execute().text.trim()
     println 'Module version: ' + version
     return version
 }

@@ -2,8 +2,8 @@ package com.github.mufanc.easyhook
 
 import android.app.Application
 import android.content.Context
-import com.github.mufanc.easyhook.util.beforeCall
 import com.github.mufanc.easyhook.util.findMethod
+import com.github.mufanc.easyhook.util.hook
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -26,8 +26,8 @@ abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposed
         Globals.lpparam = lpparam
         findMethod(Application::class.java) {
             parameterCount == 1 && name == "attach"
-        }!!.beforeCall {
-            onApplicationAttach(it.args[0] as Context)
+        }!!.hook {
+            before { onApplicationAttach(it.args[0] as Context) }
         }
         onHandleLoadPackage()
     }

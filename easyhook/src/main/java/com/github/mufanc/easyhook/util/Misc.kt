@@ -46,6 +46,14 @@ fun Any.getExtraField(key: String): Any? {
 }
 
 /**
+ * 在实例上通过键获取相应的附加值并转换为指定类型
+ */
+@Suppress("Unchecked_Cast")
+fun <T> Any.getExtraFieldAs(key: String): T? {
+    return getExtraField(key) as T?
+}
+
+/**
  * 移除实例上附加的指定键值
  */
 fun Any.removeExtraField(key: String) {
