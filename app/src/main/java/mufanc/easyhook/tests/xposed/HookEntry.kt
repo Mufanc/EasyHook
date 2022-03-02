@@ -22,23 +22,17 @@ class HookEntry : HookHelper() {
 
         findMethod(Activity::class.java) {
             name == "onCreate"
-        }!!.hook {
-            before {
-                it.thisObject.setExtraField("message", "Test: setExtraField | this message was set in onCreate")
-                Log.i("Test: hook Activity#onCreate | activity: ${it.thisObject}")
+        }!! before {
+            it.thisObject.setExtraField("message", "Test: setExtraField | this message was set in onCreate")
+            Log.i("Test: hook Activity#onCreate | activity: ${it.thisObject}")
+        }
+
+        MainActivity::class.java.name hooks {
+            find { name == "getToastText" } replace {
+                "Replaced!!"
             }
-        }
 
-        findMethod(MainActivity::class.java.name) {
-            name == "getToastText"
-        }!!.hook {
-            replace { "Replaced!!" }
-        }
-
-        findMethod(MainActivity::class.java.name) {
-            name == "onResume"
-        }!!.hook {
-            after {
+            find { name == "onResume" } after {
                 Log.i("Test: getApplication | application: ${ContextUtils.getApplication()}")
                 Log.i(it.thisObject.getExtraField("message"))
                 Timer().schedule(object : TimerTask() {

@@ -6,9 +6,9 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-private typealias MethodFilter = Method.() -> Boolean
-private typealias ConstructorFilter = Constructor<*>.() -> Boolean
-private typealias FieldFilter = Field.() -> Boolean
+typealias MethodFilter = Method.() -> Boolean
+typealias ConstructorFilter = Constructor<*>.() -> Boolean
+typealias FieldFilter = Field.() -> Boolean
 
 /**
  * 根据类名和类加载器搜索类
@@ -32,7 +32,13 @@ fun findMethod(
     clazz: Class<*>,
     filter: MethodFilter
 ): Method? {
-    return clazz.declaredMethods.find(filter)
+    clazz.declaredMethods.forEach {
+        it.isAccessible = true
+        if (filter(it)) {
+            return it
+        }
+    }
+    return null
 }
 
 /**
@@ -60,7 +66,10 @@ fun findMethods(
     clazz: Class<*>,
     filter: MethodFilter
 ): Array<Method> {
-    return clazz.declaredMethods.filter(filter).toTypedArray()
+    return clazz.declaredMethods.filter {
+        it.isAccessible = true
+        filter(it)
+    }.toTypedArray()
 }
 
 /**
@@ -88,7 +97,13 @@ fun findConstructor(
     clazz: Class<*>,
     filter: ConstructorFilter
 ): Constructor<*>? {
-    return clazz.declaredConstructors.find(filter)
+    clazz.declaredConstructors.forEach {
+        it.isAccessible = true
+        if (filter(it)) {
+            return it
+        }
+    }
+    return null
 }
 
 /**
@@ -116,7 +131,10 @@ fun findConstructors(
     clazz: Class<*>,
     filter: ConstructorFilter
 ): Array<Constructor<*>> {
-    return clazz.declaredConstructors.filter(filter).toTypedArray()
+    return clazz.declaredConstructors.filter {
+        it.isAccessible = true
+        filter(it)
+    }.toTypedArray()
 }
 
 /**
@@ -144,7 +162,13 @@ fun findField(
     clazz: Class<*>,
     filter: FieldFilter
 ): Field? {
-    return clazz.declaredFields.find(filter)
+    clazz.declaredFields.forEach {
+        it.isAccessible = true
+        if (filter(it)) {
+            return it
+        }
+    }
+    return null
 }
 
 /**
@@ -172,7 +196,10 @@ fun findFields(
     clazz: Class<*>,
     filter: FieldFilter
 ): Array<Field> {
-    return clazz.declaredFields.filter(filter).toTypedArray()
+    return clazz.declaredFields.filter {
+        it.isAccessible = true
+        filter(it)
+    }.toTypedArray()
 }
 
 /**
