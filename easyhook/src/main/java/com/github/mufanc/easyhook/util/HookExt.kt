@@ -6,20 +6,19 @@ import de.robv.android.xposed.callbacks.XCallback
 import java.lang.reflect.Member
 
 
-private typealias Callback = (param: XC_MethodHook.MethodHookParam) -> Any?
+private typealias Callback = (param: XC_MethodHook.MethodHookParam) -> Unit
 
 class Hooker(priority: Int) : XC_MethodHook(priority) {
 
-    private var replaced = false
-
     private lateinit var beforeCall: Callback
     private lateinit var afterCall: Callback
+    private lateinit var replacement: (param: MethodHookParam) -> Any?
 
     override fun beforeHookedMethod(param: MethodHookParam) {
-        if (this::beforeCall.isInitialized) {
-            beforeCall(param).let {
-                if (replaced) param.result = it
-            }
+        if (this::replacement.isInitialized) {
+            param.result = replacement(param)
+        } else if (this::beforeCall.isInitialized) {
+            beforeCall(param)
         }
     }
 
@@ -35,9 +34,8 @@ class Hooker(priority: Int) : XC_MethodHook(priority) {
         afterCall = callback
     }
 
-    fun replace(callback: Callback) {
-        before(callback)
-        replaced = true
+    fun replace(func: (param: MethodHookParam) -> Any?) {
+        replacement = func
     }
 }
 
