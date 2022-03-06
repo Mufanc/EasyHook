@@ -1,6 +1,7 @@
 package mufanc.easyhook.tests.xposed
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import com.github.mufanc.easyhook.HookHelper
 import com.github.mufanc.easyhook.util.*
@@ -42,6 +43,16 @@ class HookEntry : HookHelper() {
                 }, 2000)
             }
         }
+
+        val hook = hooker {
+            before { param ->
+                Log.i("Test \"hooker\" function | $param")
+            }
+        }
+
+        findMethod(Application::class.java) {
+            name == "onCreate"
+        }!!.hook(hook)
     }
 
     override fun onApplicationAttach(context: Context) {
