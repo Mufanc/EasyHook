@@ -50,7 +50,7 @@ class Hooker(priority: Int) : XC_MethodHook(priority) {
  * @param priority: 优先级
  * @param handler: 捕获器
  */
-fun Member.hook(
+inline fun Member.hook(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     handler: Hooker.() -> Unit
 ) {

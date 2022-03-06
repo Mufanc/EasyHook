@@ -8,7 +8,7 @@ private val objectExtras = WeakHashMap<Any, ArrayMap<String, Any?>>()
 /**
  * 捕获代码块中的错误，并输出到 Logcat
  */
-fun catch(func: () -> Unit) {
+inline fun catch(func: () -> Unit) {
     try {
         func()
     } catch (err: Throwable) {
