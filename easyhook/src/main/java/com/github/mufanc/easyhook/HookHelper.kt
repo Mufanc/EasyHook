@@ -10,6 +10,12 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposedHookZygoteInit {
 
+    companion object {
+        fun setDefaultClassLoader(classLoader: ClassLoader) {
+            Globals.defaultClassLoader = classLoader
+        }
+    }
+
     init {
         TAG?.let { Globals.TAG = TAG }
     }
@@ -17,10 +23,6 @@ abstract class HookHelper(TAG: String? = null) : IXposedHookLoadPackage, IXposed
     protected val lpparam get() = Globals.lpparam!!
 
     protected val startupParam get() = Globals.startupParam
-
-    fun setDefaultClassLoader(classLoader: ClassLoader) {
-        Globals.defaultClassLoader = classLoader
-    }
 
     final override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         Globals.lpparam = lpparam
