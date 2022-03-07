@@ -1,15 +1,40 @@
 package com.github.mufanc.easyhook.util
 
-import de.robv.android.xposed.XposedHelpers
+import java.lang.reflect.Method
+
+private fun findMethodBestMatch(clazz: Class<*>, name: String, vararg args: Any?): Method? {
+    try {
+        return if (args.all { it != null }) {
+            clazz.getDeclaredMethod(
+                name,
+                *(args.map { it!!.javaClass }.toTypedArray())
+            )
+        } else {
+            findMethods(clazz) {
+                parameterCount == args.size && this.name == name
+            }.find {
+                it.parameterTypes.forEachIndexed { index, clazz ->
+                    if (!clazz.isInstance(args[index]?.javaClass)) {
+                        return@find false
+                    }
+                }
+                true
+            }?.also { it.isAccessible = true }
+        }
+    } catch (ignored: NoSuchMethodException) {
+        return null
+    }
+}
 
 /**
  * 调用对象的某个方法
  * @param name: 方法名
- * @param args: 参数列表...
+ * @param args: 参数列表...K
  * @return 方法的返回值
  */
 fun Any.callMethod(name: String, vararg args: Any?): Any? {
-    return XposedHelpers.callMethod(this, name, *args)
+    val method = findMethodBestMatch(javaClass, name, *args)
+    return method?.invoke(this, *args)
 }
 
 /**
@@ -77,7 +102,8 @@ fun <T> Any.getFieldOrNullAs(name: String): T? {
  * @return 方法的返回值
  */
 fun Class<*>.callStaticMethod(name: String, vararg args: Any?): Any? {
-    return XposedHelpers.callStaticMethod(this, name, *args)
+    val method = findMethodBestMatch(this, name, *args)
+    return method?.invoke(null, *args)
 }
 
 /**

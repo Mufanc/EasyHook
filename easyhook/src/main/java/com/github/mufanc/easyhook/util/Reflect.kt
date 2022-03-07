@@ -1,7 +1,6 @@
 package com.github.mufanc.easyhook.util
 
 import com.github.mufanc.easyhook.Globals
-import de.robv.android.xposed.XposedHelpers
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -19,7 +18,7 @@ fun findClass(
     name: String,
     classLoader: ClassLoader = Globals.defaultClassLoader
 ): Class<*> {
-    return XposedHelpers.findClass(name, classLoader)
+    return classLoader.loadClass(name)
 }
 
 /**
