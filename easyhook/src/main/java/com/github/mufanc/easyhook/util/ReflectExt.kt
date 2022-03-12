@@ -25,12 +25,24 @@ private fun findMethodBestMatch(clazz: Class<*>, name: String, vararg args: Any?
 /**
  * 调用对象的某个方法
  * @param name: 方法名
- * @param args: 参数列表...K
+ * @param args: 参数列表...
  * @return 方法的返回值
  */
 fun Any.callMethod(name: String, vararg args: Any?): Any? {
     val method = findMethodBestMatch(javaClass, name, *args)
     return method!!.invoke(this, *args)
+}
+
+/**
+ * 根据给定的参数类型，调用对象的某个方法
+ * @param name: 方法名
+ * @param parameterTypes: 参数类型数组
+ * @param args: 参数列表...
+ * @return 方法的返回值
+ */
+fun Any.callMethodExact(name: String, parameterTypes: Array<Class<*>>, vararg args: Any?): Any? {
+    val method = javaClass.getDeclaredMethod(name, *parameterTypes)
+    return method.invoke(this, *args)
 }
 
 /**
@@ -42,6 +54,18 @@ fun Any.callMethod(name: String, vararg args: Any?): Any? {
 @Suppress("Unchecked_Cast")
 fun <T> Any.callMethodAs(name: String, vararg args: Any?): T? {
     return callMethod(name, *args) as T?
+}
+
+/**
+ * 根据给定的参数类型，调用对象的某个方法并将返回值转换为指定类型
+ * @param name: 方法名
+ * @param parameterTypes: 参数类型数组
+ * @param args: 参数列表...
+ * @return 方法的返回值
+ */
+@Suppress("Unchecked_Cast")
+fun <T> Any.callMethodExactAs(name: String, parameterTypes: Array<Class<*>>, vararg args: Any?): T? {
+    return callMethodExact(name, parameterTypes, *args) as T?
 }
 
 /**
@@ -103,6 +127,20 @@ fun Class<*>.callStaticMethod(name: String, vararg args: Any?): Any? {
 }
 
 /**
+ * 根据给定的参数类型，调用类的某个静态方法
+ * @param name: 方法名
+ * @param parameterTypes: 参数类型数组
+ * @param args: 参数列表...
+ * @return 方法的返回值
+ */
+fun Class<*>.callStaticMethodExact(
+    name: String, parameterTypes: Array<Class<*>>, vararg args: Any?
+): Any? {
+    val method = this.getDeclaredMethod(name, *parameterTypes)
+    return method.invoke(null, *args)
+}
+
+/**
  * 调用类的某个静态方法并将返回值转换为指定类型
  * @param name: 方法名
  * @param args: 参数列表...
@@ -111,6 +149,20 @@ fun Class<*>.callStaticMethod(name: String, vararg args: Any?): Any? {
 @Suppress("Unchecked_Cast")
 fun <T> Class<*>.callStaticMethodAs(name: String, vararg args: Any?): T? {
     return callStaticMethod(name, args) as T?
+}
+
+/**
+ * 根据给定的参数类型，调用类的某个静态方法并将返回值转换为指定类型
+ * @param name: 方法名
+ * @param parameterTypes: 参数类型数组
+ * @param args: 参数列表...
+ * @return 方法的返回值
+ */
+@Suppress("Unchecked_Cast")
+fun <T> Class<*>.callStaticMethodExactAs(
+    name: String, parameterTypes: Array<Class<*>>, vararg args: Any?
+): Any? {
+    return callStaticMethodExact(name, parameterTypes, *args) as T?
 }
 
 /**

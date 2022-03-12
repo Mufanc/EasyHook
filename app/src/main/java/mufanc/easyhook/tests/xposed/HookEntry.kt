@@ -36,6 +36,9 @@ class HookEntry : HookHelper() {
             find { name == "onCreate" } after { param ->
                 with (param.thisObject) {
                     Log.i("Test: callMethod with primitive type | a + b = ${callMethod("add", 3, 5)}")
+                    Log.i("Test: callMethodExact | a + b = ${
+                            callMethodExact("add", arrayOf(Int::class.java, Int::class.java), 3, 5)
+                        }")
                 }
             }
 
