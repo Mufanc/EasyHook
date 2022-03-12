@@ -19,6 +19,10 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, getToastText(), Toast.LENGTH_SHORT).show()
     }
 
+    fun add(a: Int, b: Int): Int {
+        return a + b
+    }
+
     private fun getToastText(): String {
         return "Default Text."
     }

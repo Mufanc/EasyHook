@@ -4,23 +4,19 @@ import java.lang.reflect.Method
 
 private fun findMethodBestMatch(clazz: Class<*>, name: String, vararg args: Any?): Method? {
     try {
-        return if (args.all { it != null }) {
-            clazz.getDeclaredMethod(
-                name,
-                *(args.map { it!!.javaClass }.toTypedArray())
-            )
-        } else {
-            findMethods(clazz) {
+        return findMethods(clazz) {
                 parameterCount == args.size && this.name == name
             }.find {
                 it.parameterTypes.forEachIndexed { index, clazz ->
-                    if (!clazz.isInstance(args[index]?.javaClass)) {
-                        return@find false
+                    val arg = args[index] ?: return@forEachIndexed
+                    if (clazz.isPrimitive) {
+                        if (arg.javaClass.getDeclaredField("TYPE").get(null) != clazz) return@find false
+                    } else {
+                        if (!clazz.isInstance(arg)) return@find false
                     }
                 }
                 true
             }?.also { it.isAccessible = true }
-        }
     } catch (ignored: NoSuchMethodException) {
         return null
     }
@@ -34,7 +30,7 @@ private fun findMethodBestMatch(clazz: Class<*>, name: String, vararg args: Any?
  */
 fun Any.callMethod(name: String, vararg args: Any?): Any? {
     val method = findMethodBestMatch(javaClass, name, *args)
-    return method?.invoke(this, *args)
+    return method!!.invoke(this, *args)
 }
 
 /**
@@ -103,7 +99,7 @@ fun <T> Any.getFieldOrNullAs(name: String): T? {
  */
 fun Class<*>.callStaticMethod(name: String, vararg args: Any?): Any? {
     val method = findMethodBestMatch(this, name, *args)
-    return method?.invoke(null, *args)
+    return method!!.invoke(null, *args)
 }
 
 /**

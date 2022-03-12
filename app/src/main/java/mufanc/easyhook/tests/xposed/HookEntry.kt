@@ -33,6 +33,12 @@ class HookEntry : HookHelper() {
                 "Replaced!!"
             }
 
+            find { name == "onCreate" } after { param ->
+                with (param.thisObject) {
+                    Log.i("Test: callMethod with primitive type | a + b = ${callMethod("add", 3, 5)}")
+                }
+            }
+
             find { name == "onResume" } after {
                 Log.i("Test: getApplication | application: ${ContextUtils.getApplication()}")
                 Log.i(it.thisObject.getExtraField("message"))
