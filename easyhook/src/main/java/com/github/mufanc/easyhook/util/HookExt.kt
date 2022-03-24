@@ -10,7 +10,7 @@ import java.lang.reflect.Member
  * @param priority: 优先级
  * @param handler: 捕获器
  */
-inline fun Member.hook(
+fun Member.hook(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     handler: Hooker.() -> Unit
 ) {
@@ -29,7 +29,7 @@ fun Member.hook(hooker: Hooker) {
  * 在指定方法/构造函数执行前插入 Hook
  * @param callback: 回调函数
  */
-inline infix fun Member.before(crossinline callback: Callback) {
+infix fun Member.before(callback: Callback) {
     this.hook {
         before { callback(it) }
     }
@@ -39,7 +39,7 @@ inline infix fun Member.before(crossinline callback: Callback) {
  * 在指定方法/构造函数执行后插入 Hook
  * @param callback: 回调函数
  */
-inline infix fun Member.after(crossinline callback: Callback) {
+infix fun Member.after(callback: Callback) {
     this.hook {
         after { callback(it) }
     }
@@ -49,16 +49,16 @@ inline infix fun Member.after(crossinline callback: Callback) {
  * 替换指定方法/构造函数的执行
  * @param func: 回调函数
  */
-inline infix fun Member.replace(crossinline func: Replacement) {
+infix fun Member.replace(func: Replacement) {
     this.hook {
         replace { func(it) }
     }
 }
 
-inline infix fun Class<*>.hooks(func: Matcher.() -> Unit) {
+infix fun Class<*>.hooks(func: Matcher.() -> Unit) {
     Matcher(this).func()
 }
 
-inline infix fun String.hooks(func: Matcher.() -> Unit) {
+infix fun String.hooks(func: Matcher.() -> Unit) {
     Matcher(findClass(this)).func()
 }

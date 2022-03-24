@@ -1,26 +1,6 @@
 package com.github.mufanc.easyhook.util
 
-import java.lang.reflect.Method
-
-private fun findMethodBestMatch(clazz: Class<*>, name: String, vararg args: Any?): Method? {
-    try {
-        return findMethods(clazz) {
-                parameterCount == args.size && this.name == name
-            }.find {
-                it.parameterTypes.forEachIndexed { index, clazz ->
-                    val arg = args[index] ?: return@forEachIndexed
-                    if (clazz.isPrimitive) {
-                        if (arg.javaClass.getDeclaredField("TYPE").get(null) != clazz) return@find false
-                    } else {
-                        if (!clazz.isInstance(arg)) return@find false
-                    }
-                }
-                true
-            }?.also { it.isAccessible = true }
-    } catch (ignored: NoSuchMethodException) {
-        return null
-    }
-}
+import de.robv.android.xposed.XposedHelpers
 
 /**
  * 调用对象的某个方法
@@ -29,8 +9,7 @@ private fun findMethodBestMatch(clazz: Class<*>, name: String, vararg args: Any?
  * @return 方法的返回值
  */
 fun Any.callMethod(name: String, vararg args: Any?): Any? {
-    val method = findMethodBestMatch(javaClass, name, *args)
-    return method!!.invoke(this, *args)
+    return XposedHelpers.callMethod(this, name, *args)
 }
 
 /**
@@ -41,8 +20,7 @@ fun Any.callMethod(name: String, vararg args: Any?): Any? {
  * @return 方法的返回值
  */
 fun Any.callMethodExact(name: String, parameterTypes: Array<Class<*>>, vararg args: Any?): Any? {
-    val method = javaClass.getDeclaredMethod(name, *parameterTypes)
-    return method.invoke(this, *args)
+    return XposedHelpers.callMethod(this, name, parameterTypes, *args)
 }
 
 /**
@@ -71,35 +49,37 @@ fun <T> Any.callMethodExactAs(name: String, parameterTypes: Array<Class<*>>, var
 /**
  * 获取对象的某个属性
  * @param name: 属性名
+ * @param recursive: 是否递归查找父类
  * @return 属性值
  * @throws NoSuchFieldException 未找到属性
  */
-fun Any.getField(name: String): Any? {
-    findField(javaClass) {
+fun Any.getField(name: String, recursive: Boolean = false): Any? {
+    findField(javaClass, recursive) {
         this.name == name
-    }?.let {
-        return it.get(this)
-    } ?: throw NoSuchFieldException()
+    }?.let { return it.get(this) }
+    throw NoSuchFieldException()
 }
 
 /**
  * 获取对象的某个属性并转换为指定类型
  * @param name: 属性名
+ * @param recursive: 是否递归查找父类
  * @return 属性值
  * @throws NoSuchFieldException 未找到属性
  */
 @Suppress("Unchecked_Cast")
-fun <T> Any.getFieldAs(name: String): T? {
-    return getField(name) as T?
+fun <T> Any.getFieldAs(name: String, recursive: Boolean = false): T? {
+    return getField(name, recursive) as T?
 }
 
 /**
  * 获取对象的某个属性
  * @param name: 属性名
+ * @param recursive: 是否递归查找父类
  * @return 属性值，找不到目标属性时将返回 null
  */
-fun Any.getFieldOrNull(name: String): Any? {
-    findField(javaClass) {
+fun Any.getFieldOrNull(name: String, recursive: Boolean = false): Any? {
+    findField(javaClass, recursive) {
         this.name == name
     }?.let { return it.get(this) }
     return null
@@ -108,11 +88,12 @@ fun Any.getFieldOrNull(name: String): Any? {
 /**
  * 获取对象的某个属性并转换为指定类型
  * @param name: 属性名
+ * @param recursive: 是否递归查找父类
  * @return 属性值，找不到目标属性时将返回 null
  */
 @Suppress("Unchecked_Cast")
-fun <T> Any.getFieldOrNullAs(name: String): T? {
-    return getFieldOrNull(name) as T?
+fun <T> Any.getFieldOrNullAs(name: String, recursive: Boolean = false): T? {
+    return getFieldOrNull(name, recursive) as T?
 }
 
 /**
@@ -122,8 +103,7 @@ fun <T> Any.getFieldOrNullAs(name: String): T? {
  * @return 方法的返回值
  */
 fun Class<*>.callStaticMethod(name: String, vararg args: Any?): Any? {
-    val method = findMethodBestMatch(this, name, *args)
-    return method!!.invoke(null, *args)
+    return XposedHelpers.callStaticMethod(this, name, *args)
 }
 
 /**
@@ -136,8 +116,7 @@ fun Class<*>.callStaticMethod(name: String, vararg args: Any?): Any? {
 fun Class<*>.callStaticMethodExact(
     name: String, parameterTypes: Array<Class<*>>, vararg args: Any?
 ): Any? {
-    val method = this.getDeclaredMethod(name, *parameterTypes)
-    return method.invoke(null, *args)
+    return XposedHelpers.callStaticMethod(this, name, parameterTypes, *args)
 }
 
 /**
@@ -168,35 +147,37 @@ fun <T> Class<*>.callStaticMethodExactAs(
 /**
  * 获取类的某个静态属性
  * @param name: 属性名
+ * @param recursive: 是否递归查找父类
  * @return 属性值
  * @throws NoSuchFieldException 未找到属性
  */
-fun Class<*>.getStaticField(name: String): Any? {
-    findField(this) {
+fun Class<*>.getStaticField(name: String, recursive: Boolean = false): Any? {
+    findField(this, recursive) {
         this.name == name
-    }?.let {
-        return it.get(null)
-    }?: throw NoSuchFieldException()
+    }?.let { return it.get(null) }
+    throw NoSuchFieldException()
 }
 
 /**
  * 获取类的某个静态属性并转换为指定类型
  * @param name: 属性名
+ * @param recursive: 是否递归查找父类
  * @return 属性值
  * @throws NoSuchFieldException 未找到属性
  */
 @Suppress("Unchecked_Cast")
-fun <T> Class<*>.getStaticFieldAs(name: String): T? {
-    return getStaticField(name) as T?
+fun <T> Class<*>.getStaticFieldAs(name: String, recursive: Boolean = false): T? {
+    return getStaticField(name, recursive) as T?
 }
 
 /**
  * 获取类的某个静态属性
  * @param name: 属性名
+ * @param recursive: 是否递归查找父类
  * @return 属性值，找不到目标属性时将返回 null
  */
-fun Class<*>.getStaticFieldOrNull(name: String): Any? {
-    findField(this) {
+fun Class<*>.getStaticFieldOrNull(name: String, recursive: Boolean = false): Any? {
+    findField(this, recursive) {
         this.name == name
     }?.let { return it.get(null) }
     return null
@@ -205,9 +186,10 @@ fun Class<*>.getStaticFieldOrNull(name: String): Any? {
 /**
  * 获取类的某个静态属性并转换为指定类型
  * @param name: 属性名
+ * @param recursive: 是否递归查找父类
  * @return 属性值，找不到目标属性时将返回 null
  */
 @Suppress("Unchecked_Cast")
-fun <T> Class<*>.getStaticFieldOrNullAs(name: String): T? {
-    return getStaticFieldOrNull(name) as T?
+fun <T> Class<*>.getStaticFieldOrNullAs(name: String, recursive: Boolean = false): T? {
+    return getStaticFieldOrNull(name, recursive) as T?
 }

@@ -7,6 +7,7 @@ import com.github.mufanc.easyhook.HookHelper
 import com.github.mufanc.easyhook.util.*
 import mufanc.easyhook.tests.BuildConfig
 import mufanc.easyhook.tests.ui.MainActivity
+import mufanc.easyhook.tests.ui.TestB
 import java.util.*
 
 class HookEntry : HookHelper() {
@@ -15,10 +16,12 @@ class HookEntry : HookHelper() {
     }
 
     override fun onHandleLoadPackage() {
-        if (lpparam.packageName != BuildConfig.APPLICATION_ID) {
+        if (lpparam.packageName != BuildConfig.APPLICATION_ID ||
+                lpparam.processName != BuildConfig.APPLICATION_ID) {
             return
         }
 
+        Log.i("Test: Log vararg | array", 123456, "string", Any())
         Log.i("Test: onHandleLoadPackage | package: ${lpparam.packageName}, process: ${lpparam.processName}")
 
         findMethod(Activity::class.java) {
@@ -62,6 +65,12 @@ class HookEntry : HookHelper() {
         findMethod(Application::class.java) {
             name == "onCreate"
         }!!.hook(hook)
+
+        findMethod(TestB::class.java.name) {
+            name == "method"
+        }!! after {
+            Log.i("Test: getField | ${it.thisObject.getField("mField", true)}")
+        }
     }
 
     override fun onApplicationAttach(context: Context) {

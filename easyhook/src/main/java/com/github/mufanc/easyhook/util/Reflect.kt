@@ -154,11 +154,13 @@ fun findConstructors(
 /**
  * 在类中搜索属性
  * @param clazz: 类对象
+ * @param recursive: 是否递归查找父类
  * @param filter: 条件函数
  * @return 第一个满足条件的属性
  */
-fun findField(
+tailrec fun findField(
     clazz: Class<*>,
+    recursive: Boolean = false,
     filter: FieldFilter
 ): Field? {
     clazz.declaredFields.forEach {
@@ -167,22 +169,27 @@ fun findField(
             return it
         }
     }
+    if (recursive && clazz.superclass != null) {
+        return findField(clazz.superclass, true, filter)
+    }
     return null
 }
 
 /**
  * 在类中搜索属性
  * @param clazz: 类名字符串
+ * @param recursive: 是否递归查找父类
  * @param classLoader: 类加载器（可选）
  * @param filter: 条件函数
  * @return 第一个满足条件的属性
  */
 fun findField(
     clazz: String,
+    recursive: Boolean = false,
     classLoader: ClassLoader = Globals.defaultClassLoader,
     filter: FieldFilter
 ): Field? {
-    return findField(classLoader.loadClass(clazz), filter)
+    return findField(classLoader.loadClass(clazz), recursive, filter)
 }
 
 /**
