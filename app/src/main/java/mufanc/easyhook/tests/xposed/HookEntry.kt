@@ -71,6 +71,14 @@ class HookEntry : HookHelper() {
         }!! after {
             Log.i("Test: getField | ${it.thisObject.getField("mField", true)}")
         }
+
+        findMethods(MainActivity::class.java.name) {
+            name.contains("on")
+        }.hookAll {
+            before {
+                Log.i("Test hookAll | method: ${it.method.name}")
+            }
+        }
     }
 
     override fun onApplicationAttach(context: Context) {
