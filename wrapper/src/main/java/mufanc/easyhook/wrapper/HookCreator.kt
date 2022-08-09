@@ -3,12 +3,14 @@ package mufanc.easyhook.wrapper
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XCallback
+import mufanc.easyhook.wrapper.annotation.InternalApi
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 
-internal typealias HookCallback = (XC_MethodHook.MethodHookParam) -> Unit
-internal typealias HookReplacement = (XC_MethodHook.MethodHookParam) -> Any?
+private typealias HookCallback = (XC_MethodHook.MethodHookParam) -> Unit
+private typealias HookReplacement = (XC_MethodHook.MethodHookParam) -> Any?
 
+@InternalApi
 class HookCreator @PublishedApi internal constructor(
     @PublishedApi internal val target: Class<*>
 ) {
@@ -20,7 +22,7 @@ class HookCreator @PublishedApi internal constructor(
         private lateinit var replacement: HookReplacement
 
         override fun beforeHookedMethod(param: MethodHookParam) {
-            catchAndLogExceptions {
+            catch {
                 if (this::replacement.isInitialized) {
                     param.result = replacement(param)
                     return
@@ -32,7 +34,7 @@ class HookCreator @PublishedApi internal constructor(
         }
 
         override fun afterHookedMethod(param: MethodHookParam) {
-            catchAndLogExceptions {
+            catch {
                 if (this::afterCall.isInitialized) afterCall(param)
             }
         }
