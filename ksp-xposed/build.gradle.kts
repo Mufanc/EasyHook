@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
-    id("com.google.devtools.ksp") version "1.7.0-1.0.6"
+    id("com.google.devtools.ksp") version "1.7.10-1.0.6"
 }
 
 val androidSourceCompatibility: JavaVersion by project.parent!!.extra
@@ -13,7 +13,6 @@ java {
 }
 
 dependencies {
-//    compileOnly(project(":api-stub"))
     implementation("de.robv.android.xposed:api:82")
 
     compileOnly("com.google.devtools.ksp:symbol-processing-api:1.7.10-1.0.6")
