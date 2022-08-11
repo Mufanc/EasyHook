@@ -3,6 +3,8 @@ package mufanc.easyhook.wrapper
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XCallback
+import mufanc.easyhook.wrapper.reflect.findConstructor
+import mufanc.easyhook.wrapper.reflect.findMethod
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 
@@ -55,9 +57,9 @@ class HookCreator @PublishedApi internal constructor(
         priority: Int = XCallback.PRIORITY_DEFAULT,
         init: Hooker.() -> Unit
     ) {
-        target.declaredMethods.find(filter)?.let {
+        target.findMethod(filter)?.let {
             XposedBridge.hookMethod(it, Hooker(priority).apply(init))
-        } ?: throw NoSuchMethodException()
+        } ?: throw NoSuchMethodError()
     }
 
     inline fun constructor(
@@ -65,8 +67,8 @@ class HookCreator @PublishedApi internal constructor(
         priority: Int = XCallback.PRIORITY_DEFAULT,
         init: Hooker.() -> Unit
     ) {
-        target.declaredConstructors.find(filter)?.let {
+        target.findConstructor(filter)?.let {
             XposedBridge.hookMethod(it, Hooker(priority).apply(init))
-        } ?: throw NoSuchMethodException()
+        } ?: throw NoSuchMethodError()
     }
 }
