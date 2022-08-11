@@ -53,6 +53,10 @@ fun <T> Class<*>.getStaticFieldOrNullAs(name: String): T? {
 
 // Search for field
 
-inline fun Class<*>.findField(filter: Field.() -> Boolean) : Field? {
+inline fun Class<*>.findField(filter: Field.() -> Boolean): Field? {
+    return declaredFields.find(filter)
+}
+
+inline fun Class<*>.findFields(filter: Field.() -> Boolean): Field? {
     return declaredFields.find(filter)
 }

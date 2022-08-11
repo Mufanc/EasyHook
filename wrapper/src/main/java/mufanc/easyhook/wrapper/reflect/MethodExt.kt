@@ -54,6 +54,14 @@ inline fun Class<*>.findConstructor(filter: Constructor<*>.() -> Boolean): Const
     return declaredConstructors.find(filter)
 }
 
+inline fun Class<*>.findConstructors(filter: Constructor<*>.() -> Boolean): List<Constructor<*>> {
+    return declaredConstructors.filter(filter)
+}
+
 inline fun Class<*>.findMethod(filter: Method.() -> Boolean): Method? {
     return declaredMethods.find(filter)
+}
+
+inline fun Class<*>.findMethods(filter: Method.() -> Boolean): List<Method> {
+    return declaredMethods.filter(filter)
 }

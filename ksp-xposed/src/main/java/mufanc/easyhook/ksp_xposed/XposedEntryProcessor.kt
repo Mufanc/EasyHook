@@ -19,7 +19,7 @@ import kotlin.io.path.div
 
 class XposedEntryProcessor(
     private val environment: SymbolProcessorEnvironment
-) :  SymbolProcessor {
+): SymbolProcessor {
 
     companion object {
         const val XPOSED_ENTRY = "_XposedInit"

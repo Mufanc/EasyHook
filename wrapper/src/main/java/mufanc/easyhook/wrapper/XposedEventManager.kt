@@ -9,7 +9,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import mufanc.easyhook.wrapper.annotation.InternalApi
 
 class LoaderContext internal constructor(private val classLoader: ClassLoader?) {
-    fun findClass(className: String) : Class<*> {
+    fun findClass(className: String): Class<*> {
         return XposedHelpers.findClass(className, classLoader)
     }
 }

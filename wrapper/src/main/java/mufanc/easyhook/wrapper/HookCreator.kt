@@ -13,7 +13,7 @@ class HookCreator @PublishedApi internal constructor(
     @PublishedApi internal val target: Class<*>
 ) {
 
-    class Hooker @PublishedApi internal constructor(priority: Int) : XC_MethodHook(priority) {
+    class Hooker @PublishedApi internal constructor(priority: Int): XC_MethodHook(priority) {
 
         private lateinit var beforeCall: HookCallback
         private lateinit var afterCall: HookCallback
