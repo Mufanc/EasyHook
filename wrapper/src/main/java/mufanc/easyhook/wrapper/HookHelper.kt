@@ -12,7 +12,7 @@ abstract class HookHelper(TAG: String) {
             throw RuntimeException("`HookHelper` can only be instantiated once.")
         }
         instance = true
-        Logger.TAG = TAG
+        Logger.configure(TAG = TAG)
     }
 
     abstract fun onHook()
