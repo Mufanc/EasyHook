@@ -17,7 +17,5 @@ abstract class HookHelper(TAG: String) {
 
     abstract fun onHook()
 
-    fun handle(register: XposedEventManager.() -> Unit) {
-        register(XposedEventManager)
-    }
+    fun handle(register: EasyHook.() -> Unit) = EasyHook.handle(register)
 }

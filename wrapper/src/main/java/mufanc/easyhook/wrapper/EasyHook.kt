@@ -18,11 +18,16 @@ private typealias LoadPackageCallback = LoaderContext.(XC_LoadPackage.LoadPackag
 private typealias InitZygoteCallback = LoaderContext.(IXposedHookZygoteInit.StartupParam) -> Unit
 private typealias AttachApplicationCallback = LoaderContext.(XC_LoadPackage.LoadPackageParam, Context) -> Unit
 
-object XposedEventManager {
+object EasyHook {
 
+    // Todo: 允许对相同包名注册多个回调
     private val onLoadPackageCallbacks = mutableMapOf<String, LoadPackageCallback>()
     private lateinit var onInitZygoteCallback: InitZygoteCallback
     private val onAttachApplicationCallbacks = mutableMapOf<String, AttachApplicationCallback>()
+
+    fun handle(register: EasyHook.() -> Unit) {
+        register(this)
+    }
 
     fun onLoadPackage(packageName: String, callback: LoadPackageCallback) {
         onLoadPackageCallbacks[packageName] = callback
