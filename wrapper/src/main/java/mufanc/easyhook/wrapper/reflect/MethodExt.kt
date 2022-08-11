@@ -1,6 +1,10 @@
-package mufanc.easyhook.wrapper
+package mufanc.easyhook.wrapper.reflect
 
 import de.robv.android.xposed.XposedHelpers
+import java.lang.reflect.Constructor
+import java.lang.reflect.Method
+
+// For objects
 
 fun Any.callMethod(name: String, vararg args: Any?): Any? {
     return XposedHelpers.callMethod(this, name, *args)
@@ -20,27 +24,7 @@ fun <T> Any.callMethodExactAs(name: String, parameterTypes: Array<Class<*>>, var
     return callMethodExact(name, parameterTypes, *args) as T?
 }
 
-fun Any.getField(name: String): Any? {
-    return XposedHelpers.getObjectField(this, name)
-}
-
-@Suppress("Unchecked_Cast")
-fun <T> Any.getFieldAs(name: String): T? {
-    return getField(name) as T?
-}
-
-fun Any.getFieldOrNull(name: String): Any? {
-    return try {
-       getField(name)
-    } catch (err: NoSuchFieldError) {
-        null
-    }
-}
-
-@Suppress("Unchecked_Cast")
-fun <T> Any.getFieldOrNullAs(name: String): T? {
-    return getFieldOrNull(name) as T?
-}
+// For classes
 
 fun Class<*>.callStaticMethod(name: String, vararg args: Any?): Any? {
     return XposedHelpers.callStaticMethod(this, name, *args)
@@ -64,24 +48,12 @@ fun <T> Class<*>.callStaticMethodExactAs(
     return callStaticMethodExact(name, parameterTypes, *args) as T?
 }
 
-fun Class<*>.getStaticField(name: String): Any? {
-    return XposedHelpers.getStaticObjectField(this, name)
+// Search for method/constructor
+
+inline fun Class<*>.findConstructor(filter: Constructor<*>.() -> Boolean): Constructor<*>? {
+    return declaredConstructors.find(filter)
 }
 
-@Suppress("Unchecked_Cast")
-fun <T> Class<*>.getStaticFieldAs(name: String): T? {
-    return getStaticField(name) as T?
-}
-
-fun Class<*>.getStaticFieldOrNull(name: String): Any? {
-    return try {
-        getStaticField(name)
-    } catch (err: NoSuchFieldError) {
-        null
-    }
-}
-
-@Suppress("Unchecked_Cast")
-fun <T> Class<*>.getStaticFieldOrNullAs(name: String): T? {
-    return getStaticFieldOrNull(name) as T?
+inline fun Class<*>.findMethod(filter: Method.() -> Boolean): Method? {
+    return declaredMethods.find(filter)
 }
