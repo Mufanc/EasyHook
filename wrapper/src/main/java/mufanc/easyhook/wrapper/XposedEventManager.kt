@@ -8,9 +8,15 @@ import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import mufanc.easyhook.wrapper.annotation.InternalApi
 
-private typealias LoadPackageCallback = (XC_LoadPackage.LoadPackageParam) -> Unit
-private typealias InitZygoteCallback = (IXposedHookZygoteInit.StartupParam) -> Unit
-private typealias AttachApplicationCallback = (XC_LoadPackage.LoadPackageParam, Context) -> Unit
+class ClassFinder internal constructor(private val classLoader: ClassLoader?) {
+    fun findClass(className: String) : Class<*> {
+        return XposedHelpers.findClass(className, classLoader)
+    }
+}
+
+private typealias LoadPackageCallback = ClassFinder.(XC_LoadPackage.LoadPackageParam) -> Unit
+private typealias InitZygoteCallback = ClassFinder.(IXposedHookZygoteInit.StartupParam) -> Unit
+private typealias AttachApplicationCallback = ClassFinder.(XC_LoadPackage.LoadPackageParam, Context) -> Unit
 
 object XposedEventManager {
 
@@ -39,21 +45,26 @@ object XposedEventManager {
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         onAttachApplicationCallbacks[lpparam.packageName]?.let { callback ->
-                            catch { callback(lpparam, param.args[0] as Context) }
+                            catch {
+                                val context = param.args[0] as Context
+                                callback(ClassFinder(context.classLoader), lpparam, context)
+                            }
                         }
                     }
                 }
             )
         }
         onLoadPackageCallbacks[lpparam.packageName]?.let { callback ->
-            catch { callback(lpparam) }
+            catch {
+                callback(ClassFinder(lpparam.classLoader), lpparam)
+            }
         }
     }
 
     @InternalApi
     fun dispatchInitZygoteEvent(startupParam: IXposedHookZygoteInit.StartupParam) {
         if (::onInitZygoteCallback.isInitialized) {
-            onInitZygoteCallback(startupParam)
+            onInitZygoteCallback(ClassFinder(null), startupParam)
         }
     }
 }

@@ -3,14 +3,12 @@ package mufanc.easyhook.wrapper
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XCallback
-import mufanc.easyhook.wrapper.annotation.InternalApi
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 
 private typealias HookCallback = (XC_MethodHook.MethodHookParam) -> Unit
 private typealias HookReplacement = (XC_MethodHook.MethodHookParam) -> Any?
 
-@InternalApi
 class HookCreator @PublishedApi internal constructor(
     @PublishedApi internal val target: Class<*>
 ) {
