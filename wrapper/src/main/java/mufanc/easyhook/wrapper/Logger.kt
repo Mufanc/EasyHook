@@ -1,68 +1,112 @@
 package mufanc.easyhook.wrapper
 
 import android.util.Log
+import de.robv.android.xposed.XposedBridge
 
 object Logger {
-    
-    var TAG = "EasyHook"
+
+    private var TAG = "EasyHook"
+    private var toLogcat = true   // 打印到系统 Logcat
+    private var toXposedBridge = false  // 打印到 Xposed Bridge
+
+    fun configure(TAG: String? = null, toLogcat: Boolean? = null, toXposedBridge: Boolean? = null) {
+        TAG?.let { this.TAG = it }
+        toLogcat?.let { this.toLogcat = it }
+        toXposedBridge?.let { this.toXposedBridge = it }
+    }
     
     fun v(message: Any?, err: Throwable? = null) {
-        Log.v(TAG, "$message", err)
+        if (toLogcat) Log.v(TAG, "$message", err)
+        if (toXposedBridge) {
+            XposedBridge.log("$message")
+            XposedBridge.log(err)
+        }
     }
 
     fun v(err: Throwable) {
-        Log.v(TAG, "", err)
+        if (toLogcat) Log.v(TAG, "", err)
+        if (toXposedBridge) XposedBridge.log(err)
     }
 
     fun v(vararg args: Any?) {
-        Log.v(TAG, args.joinToString(" ") { "$it" })
+        val message = args.joinToString(" ") { "$it" }
+        if (toLogcat) Log.v(TAG, message)
+        if (toXposedBridge) XposedBridge.log(message)
     }
 
     fun d(message: Any?, err: Throwable? = null) {
-        Log.d(TAG, "$message", err)
+        if (toLogcat) Log.d(TAG, "$message", err)
+        if (toXposedBridge) {
+            XposedBridge.log("$message")
+            XposedBridge.log(err)
+        }
     }
 
     fun d(err: Throwable) {
-        Log.d(TAG, "", err)
+        if (toLogcat) Log.d(TAG, "", err)
+        if (toXposedBridge) XposedBridge.log(err)
     }
 
     fun d(vararg args: Any?) {
-        Log.d(TAG, args.joinToString(" ") { "$it" })
+        val message = args.joinToString(" ") { "$it" }
+        if (toLogcat) Log.d(TAG, message)
+        if (toXposedBridge) XposedBridge.log(message)
     }
 
     fun i(message: Any?, err: Throwable? = null) {
-        Log.i(TAG, "$message", err)
+        if (toLogcat) Log.i(TAG, "$message", err)
+        if (toXposedBridge) {
+            XposedBridge.log("$message")
+            XposedBridge.log(err)
+        }
     }
 
     fun i(err: Throwable) {
-        Log.i(TAG, "", err)
+        if (toLogcat) Log.i(TAG, "", err)
+        if (toXposedBridge) XposedBridge.log(err)
     }
 
     fun i(vararg args: Any?) {
-        Log.i(TAG, args.joinToString(" ") { "$it" })
+        val message = args.joinToString(" ") { "$it" }
+        if (toLogcat) Log.i(TAG, message)
+        if (toXposedBridge) XposedBridge.log(message)
     }
 
     fun w(message: Any?, err: Throwable? = null) {
-        Log.w(TAG, "$message", err)
+        if (toLogcat) Log.w(TAG, "$message", err)
+        if (toXposedBridge) {
+            XposedBridge.log("$message")
+            XposedBridge.log(err)
+        }
     }
 
     fun w(err: Throwable) {
-        Log.w(TAG, "", err)
+        if (toLogcat) Log.w(TAG, "", err)
+        if (toXposedBridge) XposedBridge.log(err)
     }
 
     fun w(vararg args: Any?) {
-        Log.w(TAG, args.joinToString(" ") { "$it" })
+        val message = args.joinToString(" ") { "$it" }
+        if (toLogcat) Log.w(TAG, message)
+        if (toXposedBridge) XposedBridge.log(message)
     }
 
     fun e(message: Any?, err: Throwable? = null) {
-        Log.e(TAG, "$message", err)
+        if (toLogcat) Log.e(TAG, "$message", err)
+        if (toXposedBridge) {
+            XposedBridge.log("$message")
+            XposedBridge.log(err)
+        }
     }
 
     fun e(err: Throwable) {
-        Log.e(TAG, "", err)
+        if (toLogcat) Log.e(TAG, "", err)
+        if (toXposedBridge) XposedBridge.log(err)
     }
 
     fun e(vararg args: Any?) {
-        Log.e(TAG, args.joinToString(" ") { "$it" })
+        val message = args.joinToString(" ") { "$it" }
+        if (toLogcat) Log.e(TAG, message)
+        if (toXposedBridge) XposedBridge.log(message)
     }
 }

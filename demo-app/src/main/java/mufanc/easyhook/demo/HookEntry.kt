@@ -2,12 +2,14 @@ package mufanc.easyhook.demo
 
 import android.widget.Toast
 import mufanc.easyhook.wrapper.HookHelper
+import mufanc.easyhook.wrapper.Logger
 import mufanc.easyhook.wrapper.annotation.XposedEntry
 import mufanc.easyhook.wrapper.hook
 
 @XposedEntry
 class HookEntry : HookHelper("EasyHook-Demo") {
     override fun onHook() = handle {
+        Logger.configure(toXposedBridge = true)
         onAttachApplication(BuildConfig.APPLICATION_ID) { lpparam, context ->
             findClass(MainActivity::class.java.name) hook {
                 method({ name == "onCreate" }) {
