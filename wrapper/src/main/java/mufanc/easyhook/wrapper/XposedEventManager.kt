@@ -8,15 +8,15 @@ import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import mufanc.easyhook.wrapper.annotation.InternalApi
 
-class ClassFinder internal constructor(private val classLoader: ClassLoader?) {
+class LoaderContext internal constructor(private val classLoader: ClassLoader?) {
     fun findClass(className: String) : Class<*> {
         return XposedHelpers.findClass(className, classLoader)
     }
 }
 
-private typealias LoadPackageCallback = ClassFinder.(XC_LoadPackage.LoadPackageParam) -> Unit
-private typealias InitZygoteCallback = ClassFinder.(IXposedHookZygoteInit.StartupParam) -> Unit
-private typealias AttachApplicationCallback = ClassFinder.(XC_LoadPackage.LoadPackageParam, Context) -> Unit
+private typealias LoadPackageCallback = LoaderContext.(XC_LoadPackage.LoadPackageParam) -> Unit
+private typealias InitZygoteCallback = LoaderContext.(IXposedHookZygoteInit.StartupParam) -> Unit
+private typealias AttachApplicationCallback = LoaderContext.(XC_LoadPackage.LoadPackageParam, Context) -> Unit
 
 object XposedEventManager {
 
@@ -47,7 +47,7 @@ object XposedEventManager {
                         onAttachApplicationCallbacks[lpparam.packageName]?.let { callback ->
                             catch {
                                 val context = param.args[0] as Context
-                                callback(ClassFinder(context.classLoader), lpparam, context)
+                                callback(LoaderContext(context.classLoader), lpparam, context)
                             }
                         }
                     }
@@ -56,7 +56,7 @@ object XposedEventManager {
         }
         onLoadPackageCallbacks[lpparam.packageName]?.let { callback ->
             catch {
-                callback(ClassFinder(lpparam.classLoader), lpparam)
+                callback(LoaderContext(lpparam.classLoader), lpparam)
             }
         }
     }
@@ -64,7 +64,7 @@ object XposedEventManager {
     @InternalApi
     fun dispatchInitZygoteEvent(startupParam: IXposedHookZygoteInit.StartupParam) {
         if (::onInitZygoteCallback.isInitialized) {
-            onInitZygoteCallback(ClassFinder(null), startupParam)
+            onInitZygoteCallback(LoaderContext(null), startupParam)
         }
     }
 }
