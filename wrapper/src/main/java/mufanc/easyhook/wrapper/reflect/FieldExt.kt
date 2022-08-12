@@ -54,9 +54,9 @@ fun <T> Class<*>.getStaticFieldOrNullAs(name: String): T? {
 // Search for field
 
 inline fun Class<*>.findField(filter: Field.() -> Boolean): Field? {
-    return declaredFields.find(filter)
+    return declaredFields.find(filter)?.apply { isAccessible = true }
 }
 
-inline fun Class<*>.findFields(filter: Field.() -> Boolean): Field? {
-    return declaredFields.find(filter)
+inline fun Class<*>.findFields(filter: Field.() -> Boolean): List<Field> {
+    return declaredFields.filter(filter).onEach { it.isAccessible = true }
 }

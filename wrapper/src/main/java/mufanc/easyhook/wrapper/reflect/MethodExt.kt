@@ -51,17 +51,17 @@ fun <T> Class<*>.callStaticMethodExactAs(
 // Search for method/constructor
 
 inline fun Class<*>.findConstructor(filter: Constructor<*>.() -> Boolean): Constructor<*>? {
-    return declaredConstructors.find(filter)
+    return declaredConstructors.find(filter)?.apply { isAccessible = true }
 }
 
 inline fun Class<*>.findConstructors(filter: Constructor<*>.() -> Boolean): List<Constructor<*>> {
-    return declaredConstructors.filter(filter)
+    return declaredConstructors.filter(filter).onEach { it.isAccessible = true }
 }
 
 inline fun Class<*>.findMethod(filter: Method.() -> Boolean): Method? {
-    return declaredMethods.find(filter)
+    return declaredMethods.find(filter)?.apply { isAccessible = true }
 }
 
 inline fun Class<*>.findMethods(filter: Method.() -> Boolean): List<Method> {
-    return declaredMethods.filter(filter)
+    return declaredMethods.filter(filter).onEach { it.isAccessible = true }
 }
