@@ -51,7 +51,7 @@ class XposedEntryProcessor(
                         .writeText("${entry.packageName.asString()}.${XPOSED_ENTRY}")
                 }
 
-                val manager = ClassName("mufanc.easyhook.wrapper", "XposedEventManager")
+                val manager = ClassName("mufanc.easyhook.wrapper", "EasyHook")
                 FileSpec.builder(entry.packageName.asString(), XPOSED_ENTRY)
                     .addType(
                         TypeSpec.classBuilder(XPOSED_ENTRY)
