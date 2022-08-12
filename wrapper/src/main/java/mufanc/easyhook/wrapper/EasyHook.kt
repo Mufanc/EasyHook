@@ -69,7 +69,9 @@ object EasyHook {
     @InternalApi
     fun dispatchInitZygoteEvent(startupParam: IXposedHookZygoteInit.StartupParam) {
         if (::onInitZygoteCallback.isInitialized) {
-            onInitZygoteCallback(LoaderContext(null), startupParam)
+            catch {
+                onInitZygoteCallback(LoaderContext(null), startupParam)
+            }
         }
     }
 }
