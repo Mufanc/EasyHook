@@ -20,25 +20,28 @@ private typealias AttachApplicationCallback = LoaderContext.(XC_LoadPackage.Load
 
 object EasyHook {
 
-    // Todo: 允许对相同包名注册多个回调
-    private val onLoadPackageCallbacks = mutableMapOf<String, LoadPackageCallback>()
-    private lateinit var onInitZygoteCallback: InitZygoteCallback
-    private val onAttachApplicationCallbacks = mutableMapOf<String, AttachApplicationCallback>()
+    private val onLoadPackageCallbacks = mutableMapOf<String, MutableList<LoadPackageCallback>>()
+    private val onInitZygoteCallback = mutableListOf<InitZygoteCallback>()
+    private val onAttachApplicationCallbacks = mutableMapOf<String, MutableList<AttachApplicationCallback>>()
 
     fun handle(register: EasyHook.() -> Unit) {
         register(this)
     }
 
     fun onLoadPackage(packageName: String, callback: LoadPackageCallback) {
-        onLoadPackageCallbacks[packageName] = callback
+        onLoadPackageCallbacks[packageName]?.add(callback) ?: let {
+            onLoadPackageCallbacks[packageName] = mutableListOf(callback)
+        }
     }
 
     fun onInitZygote(callback: InitZygoteCallback) {
-        onInitZygoteCallback = callback
+        onInitZygoteCallback.add(callback)
     }
 
     fun onAttachApplication(packageName: String, callback: AttachApplicationCallback) {
-        onAttachApplicationCallbacks[packageName] = callback
+        onAttachApplicationCallbacks[packageName]?.add(callback) ?: let {
+            onAttachApplicationCallbacks[packageName] = mutableListOf(callback)
+        }
     }
 
     @InternalApi
@@ -49,9 +52,9 @@ object EasyHook {
                 Context::class.java,
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
-                        onAttachApplicationCallbacks[lpparam.packageName]?.let { callback ->
+                        val context = param.args[0] as Context
+                        onAttachApplicationCallbacks[lpparam.packageName]?.forEach { callback ->
                             catch {
-                                val context = param.args[0] as Context
                                 callback(LoaderContext(context.classLoader), lpparam, context)
                             }
                         }
@@ -59,7 +62,7 @@ object EasyHook {
                 }
             )
         }
-        onLoadPackageCallbacks[lpparam.packageName]?.let { callback ->
+        onLoadPackageCallbacks[lpparam.packageName]?.forEach { callback ->
             catch {
                 callback(LoaderContext(lpparam.classLoader), lpparam)
             }
@@ -68,10 +71,8 @@ object EasyHook {
 
     @InternalApi
     fun dispatchInitZygoteEvent(startupParam: IXposedHookZygoteInit.StartupParam) {
-        if (::onInitZygoteCallback.isInitialized) {
-            catch {
-                onInitZygoteCallback(LoaderContext(null), startupParam)
-            }
+        onInitZygoteCallback.forEach { callback ->
+            callback(LoaderContext(null), startupParam)
         }
     }
 }
