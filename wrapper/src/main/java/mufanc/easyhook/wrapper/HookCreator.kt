@@ -55,20 +55,20 @@ class HookCreator @PublishedApi internal constructor(
     inline fun method(
         filter: Method.() -> Boolean,
         priority: Int = XCallback.PRIORITY_DEFAULT,
-        init: Hooker.() -> Unit
+        initializer: Hooker.() -> Unit
     ) {
         target.findMethod(filter)?.let {
-            XposedBridge.hookMethod(it, Hooker(priority).apply(init))
+            XposedBridge.hookMethod(it, Hooker(priority).apply(initializer))
         } ?: throw NoSuchMethodError()
     }
 
     inline fun constructor(
         filter: Constructor<*>.() -> Boolean,
         priority: Int = XCallback.PRIORITY_DEFAULT,
-        init: Hooker.() -> Unit
+        initializer: Hooker.() -> Unit
     ) {
         target.findConstructor(filter)?.let {
-            XposedBridge.hookMethod(it, Hooker(priority).apply(init))
+            XposedBridge.hookMethod(it, Hooker(priority).apply(initializer))
         } ?: throw NoSuchMethodError()
     }
 }
