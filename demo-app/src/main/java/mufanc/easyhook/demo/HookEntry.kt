@@ -12,13 +12,13 @@ class HookEntry : HookHelper("EasyHook-Demo") {
     override fun onHook() = handle {
         Logger.configure(toXposedBridge = true)
         onAttachApplication(BuildConfig.APPLICATION_ID) { _, context ->
-            findClass(MainActivity::class.java.name) hook { clazz ->
+            findClass(MainActivity::class.java.name).hook { clazz ->
                 method({ name == "onCreate" }) {
                     before {
                         Toast.makeText(context, clazz.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
-                clazz.findMethod { name == "onCreate" }!! hook { method ->
+                clazz.findMethod { name == "onCreate" }!!.hook { method ->
                     after {
                         Toast.makeText(context, method.toString(), Toast.LENGTH_SHORT).show()
                     }
