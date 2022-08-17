@@ -67,7 +67,7 @@ class HookEntry : IXposedHookLoadPackage {
 class HookEntry : HookHelper("CustomTAG") {
     override fun onHook() = handle {
         onLoadPackage(BuildConfig.APPLICATION_ID) {
-            Activity::class.java hook {
+            Activity::class.java.hook {
                 method({ name == "onCreate" }) {
                     Logger.i("Activity created!")
                 }
