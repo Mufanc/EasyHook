@@ -16,6 +16,7 @@ import mufanc.easyhook.wrapper.annotation.XposedEntry
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.div
+import kotlin.io.path.listDirectoryEntries
 
 class XposedEntryProcessor(
     private val environment: SymbolProcessorEnvironment
@@ -33,14 +34,13 @@ class XposedEntryProcessor(
             0 -> Unit
             1 -> {  // 注入 assets 并生成一个 _XposedInit 类
                 val entry = symbols.first()
-                val sourcePath = entry.annotations.firstNotNullOf { ksa ->
-                    ksa.arguments.find {
-                        it.name?.asString() == XposedEntry::sourcePath.name
-                    }
-                }.value.toString().trim()
-                val projectName = (entry.location as FileLocation).filePath.split(sourcePath)[0] + sourcePath
 
-                Path("$projectName${File.separator}assets").let { assets ->
+                var sourceRoot = Path((entry.location as FileLocation).filePath).parent
+                while (sourceRoot.listDirectoryEntries("AndroidManifest.xml").isEmpty()) {
+                    sourceRoot = sourceRoot.parent
+                }
+
+                Path("$sourceRoot${File.separator}assets").let { assets ->
                     assets.toFile().let {  // 如果 assets 目录不存在则创建
                         if ((it.exists() && it.isDirectory).not()) {
                             it.delete()
