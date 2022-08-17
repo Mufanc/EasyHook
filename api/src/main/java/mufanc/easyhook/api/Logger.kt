@@ -1,4 +1,4 @@
-package mufanc.easyhook.wrapper
+package mufanc.easyhook.api
 
 import android.util.Log
 import de.robv.android.xposed.XposedBridge

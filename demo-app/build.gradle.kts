@@ -33,8 +33,8 @@ android {
 dependencies {
     compileOnly("de.robv.android.xposed:api:82")
     compileOnly("de.robv.android.xposed:api:82:sources")
+    implementation(project(":api"))
 
-    implementation(project(":wrapper"))
     ksp(project(":ksp-xposed"))
 
     implementation("androidx.core:core-ktx:1.8.0")

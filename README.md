@@ -14,7 +14,7 @@ git submodule add -b <branch> 'https://github.com/Mufanc/EasyHook' easyhook
 
 ```kotlin
 include(
-    ":easyhook:wrapper",
+    ":easyhook:api",
     ":easyhook:ksp-xposed"
 )
 ```
@@ -27,7 +27,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":easyhook:wrapper"))
+    implementation(project(":easyhook:api"))
     ksp(project(":easyhook:ksp-xposed"))
 }
 ```

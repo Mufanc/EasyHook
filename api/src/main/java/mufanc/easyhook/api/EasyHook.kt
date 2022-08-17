@@ -1,4 +1,4 @@
-package mufanc.easyhook.wrapper
+package mufanc.easyhook.api
 
 import android.app.Application
 import android.content.Context
@@ -6,7 +6,7 @@ import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import mufanc.easyhook.wrapper.annotation.InternalApi
+import mufanc.easyhook.api.annotation.InternalApi
 
 class LoaderContext internal constructor(private val classLoader: ClassLoader?) {
     fun findClass(className: String): Class<*> {

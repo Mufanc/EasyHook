@@ -34,7 +34,7 @@ android {
     kotlinOptions {
         jvmTarget = kotlinJvmTarget
         freeCompilerArgs = listOf(
-            "-opt-in=mufanc.easyhook.wrapper.annotation.InternalApi"
+            "-opt-in=mufanc.easyhook.api.annotation.InternalApi"
         )
     }
 }

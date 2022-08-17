@@ -22,5 +22,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "EasyHook"
-include(":wrapper", ":ksp-xposed")
+include(":api", ":ksp-xposed")
 include(":demo-app")

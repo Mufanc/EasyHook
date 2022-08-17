@@ -1,10 +1,10 @@
-package mufanc.easyhook.wrapper
+package mufanc.easyhook.api
 
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XCallback
-import mufanc.easyhook.wrapper.reflect.findConstructor
-import mufanc.easyhook.wrapper.reflect.findMethod
+import mufanc.easyhook.api.reflect.findConstructor
+import mufanc.easyhook.api.reflect.findMethod
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 

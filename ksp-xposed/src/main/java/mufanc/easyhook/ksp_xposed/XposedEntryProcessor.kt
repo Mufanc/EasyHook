@@ -11,8 +11,8 @@ import com.squareup.kotlinpoet.*
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import mufanc.easyhook.wrapper.IXposedEntry
-import mufanc.easyhook.wrapper.annotation.XposedEntry
+import mufanc.easyhook.api.IXposedEntry
+import mufanc.easyhook.api.annotation.XposedEntry
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.div
@@ -51,14 +51,14 @@ class XposedEntryProcessor(
                         .writeText("${entry.packageName.asString()}.${XPOSED_ENTRY}")
                 }
 
-                val manager = ClassName("mufanc.easyhook.wrapper", "EasyHook")
+                val manager = ClassName("mufanc.easyhook.api", "EasyHook")
                 FileSpec.builder(entry.packageName.asString(), XPOSED_ENTRY)
                     .addType(
                         TypeSpec.classBuilder(XPOSED_ENTRY)
                             .addAnnotation(
                                 AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
                                     .addMember(
-                                        "%T::class", ClassName("mufanc.easyhook.wrapper.annotation", "InternalApi"))
+                                        "%T::class", ClassName("mufanc.easyhook.api.annotation", "InternalApi"))
                                     .build()
                             )
                             .addSuperinterface(IXposedEntry::class)
