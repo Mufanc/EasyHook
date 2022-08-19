@@ -1,10 +1,10 @@
 package mufanc.easyhook.demo
 
 import android.widget.Toast
-import mufanc.easyhook.api.HookHelper
 import mufanc.easyhook.api.Logger
 import mufanc.easyhook.api.annotation.XposedEntry
-import mufanc.easyhook.api.hook
+import mufanc.easyhook.api.hook.HookHelper
+import mufanc.easyhook.api.hook.hook
 import mufanc.easyhook.api.reflect.findMethod
 
 @XposedEntry

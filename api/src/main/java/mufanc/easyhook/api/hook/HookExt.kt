@@ -1,4 +1,4 @@
-package mufanc.easyhook.api
+package mufanc.easyhook.api.hook
 
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XCallback
