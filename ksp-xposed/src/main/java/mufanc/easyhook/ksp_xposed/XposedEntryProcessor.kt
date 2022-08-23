@@ -61,6 +61,10 @@ class XposedEntryProcessor(
                                         "%T::class", ClassName("mufanc.easyhook.api.annotation", "InternalApi"))
                                     .build()
                             )
+                            .addAnnotation(
+                                AnnotationSpec.builder(ClassName("androidx.annotation", "Keep"))
+                                    .build()
+                            )
                             .addSuperinterface(IXposedEntry::class)
                             .addInitializerBlock(
                                 CodeBlock.builder()

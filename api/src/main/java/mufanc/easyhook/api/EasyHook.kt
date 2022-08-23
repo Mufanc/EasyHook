@@ -2,6 +2,7 @@ package mufanc.easyhook.api
 
 import android.app.Application
 import android.content.Context
+import androidx.annotation.Keep
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
@@ -18,6 +19,7 @@ private typealias LoadPackageCallback = LoaderContext.(XC_LoadPackage.LoadPackag
 private typealias InitZygoteCallback = LoaderContext.(IXposedHookZygoteInit.StartupParam) -> Unit
 private typealias AttachApplicationCallback = LoaderContext.(XC_LoadPackage.LoadPackageParam, Context) -> Unit
 
+@Keep
 object EasyHook {
 
     private val onLoadPackageCallbacks = mutableMapOf<String, MutableList<LoadPackageCallback>>()

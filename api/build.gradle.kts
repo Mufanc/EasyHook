@@ -41,4 +41,5 @@ android {
 
 dependencies {
     compileOnly("de.robv.android.xposed:api:82")
+    implementation("androidx.annotation:annotation:1.4.0")
 }
