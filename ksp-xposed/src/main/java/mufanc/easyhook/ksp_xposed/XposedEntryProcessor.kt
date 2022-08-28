@@ -48,7 +48,9 @@ class XposedEntryProcessor(
                         }
                     }
                     assets.div("xposed_init").toFile()
-                        .writeText("${entry.packageName.asString()}.${XPOSED_ENTRY}")
+                        .also {
+                            environment.logger.warn("@Generated `xposed_init` at $it")
+                        }.writeText("${entry.packageName.asString()}.${XPOSED_ENTRY}")
                 }
 
                 val manager = ClassName("mufanc.easyhook.api", "EasyHook")

@@ -3,7 +3,6 @@ package mufanc.easyhook.api.hook
 import mufanc.easyhook.api.EasyHook
 import mufanc.easyhook.api.Logger
 
-// Todo: 自动生成作用域 arrays.xml
 abstract class HookHelper(TAG: String) {
 
     companion object {
