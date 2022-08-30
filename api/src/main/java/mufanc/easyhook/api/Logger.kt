@@ -19,7 +19,7 @@ object Logger {
         if (toLogcat) Log.v(TAG, "$message", err)
         if (toXposedBridge) {
             XposedBridge.log("$message")
-            XposedBridge.log(err)
+            err?.let { XposedBridge.log(it) }
         }
     }
 
@@ -38,7 +38,7 @@ object Logger {
         if (toLogcat) Log.d(TAG, "$message", err)
         if (toXposedBridge) {
             XposedBridge.log("$message")
-            XposedBridge.log(err)
+            err?.let { XposedBridge.log(it) }
         }
     }
 
@@ -57,7 +57,7 @@ object Logger {
         if (toLogcat) Log.i(TAG, "$message", err)
         if (toXposedBridge) {
             XposedBridge.log("$message")
-            XposedBridge.log(err)
+            err?.let { XposedBridge.log(it) }
         }
     }
 
@@ -76,7 +76,7 @@ object Logger {
         if (toLogcat) Log.w(TAG, "$message", err)
         if (toXposedBridge) {
             XposedBridge.log("$message")
-            XposedBridge.log(err)
+            err?.let { XposedBridge.log(it) }
         }
     }
 
@@ -95,7 +95,7 @@ object Logger {
         if (toLogcat) Log.e(TAG, "$message", err)
         if (toXposedBridge) {
             XposedBridge.log("$message")
-            XposedBridge.log(err)
+            err?.let { XposedBridge.log(it) }
         }
     }
 
