@@ -8,7 +8,7 @@ inline fun Class<*>.hook(initializer: HookCreator.(Class<*>) -> Unit) {
     initializer(HookCreator(this), this)
 }
 
-inline fun <T : Member>T.hook(
+inline fun <T : Member> T.hook(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     initializer: HookCreator.Hooker.(T) -> Unit
 ) {
