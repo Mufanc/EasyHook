@@ -11,7 +11,7 @@ import java.lang.reflect.Method
 @XposedEntry
 class HookEntry : HookHelper("EasyHook-Demo") {
     override fun onHook() = handle {
-        Logger.configure(toXposedBridge = true)
+        Logger.configure(target = +Logger.Target.XPOSED_BRIDGE)
         onAttachApplication(BuildConfig.APPLICATION_ID) { _, context ->
             findClass(MainActivity::class.java.name).hook { clazz ->
                 method({ name == "onCreate" }) {

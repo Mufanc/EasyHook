@@ -5,108 +5,91 @@ import de.robv.android.xposed.XposedBridge
 
 object Logger {
 
-    private var TAG = "EasyHook"
-    private var toLogcat = true   // 打印到系统 Logcat
-    private var toXposedBridge = false  // 打印到 Xposed Bridge
-
-    fun configure(TAG: String? = null, toLogcat: Boolean? = null, toXposedBridge: Boolean? = null) {
-        TAG?.let { this.TAG = it }
-        toLogcat?.let { this.toLogcat = it }
-        toXposedBridge?.let { this.toXposedBridge = it }
+    enum class Level(val priority: Int) {
+        TRACE(1000),
+        DEBUG(2000),
+        INFO(3000),
+        WARN(4000),
+        ERROR(5000)
     }
-    
-    fun v(message: Any?, err: Throwable? = null) {
-        if (toLogcat) Log.v(TAG, "$message", err)
-        if (toXposedBridge) {
-            XposedBridge.log("$message")
-            err?.let { XposedBridge.log(it) }
+
+    enum class Target(val flag: Int) {
+        LOGCAT(1 shl 0), XPOSED_BRIDGE(1 shl 1);
+
+        operator fun unaryPlus(): Int {
+            return flag
+        }
+
+        operator fun unaryMinus(): Int {
+            return -(flag xor -1)
         }
     }
 
-    fun v(err: Throwable) {
-        if (toLogcat) Log.v(TAG, "", err)
-        if (toXposedBridge) XposedBridge.log(err)
+    interface Handler {
+        fun onLogPrinted(level: Level, message: String, err: Throwable?)
     }
 
-    fun v(vararg args: Any?) {
-        val message = args.joinToString(" ") { "$it" }
-        if (toLogcat) Log.v(TAG, message)
-        if (toXposedBridge) XposedBridge.log(message)
+    private var logcatTag = "EasyHook"
+    private var printTo = +Target.LOGCAT
+    private var logLevel = Level.DEBUG
+    private var logHandler: Handler? = null
+
+    fun configure(TAG: String? = null, target: Int? = null, level: Level? = null, handler: Handler? = null) {
+        TAG?.let { logcatTag = it }
+        target?.let {
+            printTo = if (target > 0) {
+                printTo or target
+            } else {
+                printTo and (-1 xor -target)
+            }
+        }
+        level?.let { logLevel = level }
+        handler?.let { logHandler = it }
     }
 
-    fun d(message: Any?, err: Throwable? = null) {
-        if (toLogcat) Log.d(TAG, "$message", err)
-        if (toXposedBridge) {
-            XposedBridge.log("$message")
-            err?.let { XposedBridge.log(it) }
+    private fun log(level: Level, args: Array<out Any?>, err: Throwable? = null) {
+        if (level.priority < logLevel.priority) return
+        var message = args.joinToString(" ") { "$it" }
+
+        if (printTo and Target.LOGCAT.flag != 0) {
+            err?.let {
+                message += "\n" + Log.getStackTraceString(err)
+            }
+            when (level) {
+                Level.TRACE -> Log.v(logcatTag, message)
+                Level.DEBUG -> Log.d(logcatTag, message)
+                Level.INFO -> Log.i(logcatTag, message)
+                Level.WARN -> Log.w(logcatTag, message)
+                Level.ERROR -> Log.e(logcatTag, message)
+            }
+        }
+
+        if (printTo and Target.XPOSED_BRIDGE.flag != 0) {
+            val prefix = when (level) {
+                Level.TRACE -> "[TRACE]"
+                Level.DEBUG -> "[DEBUG]"
+                Level.INFO -> "[ INFO]"
+                Level.WARN -> "[ WARN]"
+                Level.ERROR -> "[ERROR]"
+            }
+            XposedBridge.log("$prefix $message")
+            err?.let {
+                XposedBridge.log(err)
+            }
+        }
+
+        logHandler?.apply {
+            onLogPrinted(level, message, err)
         }
     }
 
-    fun d(err: Throwable) {
-        if (toLogcat) Log.d(TAG, "", err)
-        if (toXposedBridge) XposedBridge.log(err)
-    }
+    fun v(vararg args: Any?, err: Throwable? = null) = log(Level.TRACE, args, err)
 
-    fun d(vararg args: Any?) {
-        val message = args.joinToString(" ") { "$it" }
-        if (toLogcat) Log.d(TAG, message)
-        if (toXposedBridge) XposedBridge.log(message)
-    }
+    fun d(vararg args: Any?, err: Throwable? = null) = log(Level.DEBUG, args, err)
 
-    fun i(message: Any?, err: Throwable? = null) {
-        if (toLogcat) Log.i(TAG, "$message", err)
-        if (toXposedBridge) {
-            XposedBridge.log("$message")
-            err?.let { XposedBridge.log(it) }
-        }
-    }
+    fun i(vararg args: Any?, err: Throwable? = null) = log(Level.INFO, args, err)
 
-    fun i(err: Throwable) {
-        if (toLogcat) Log.i(TAG, "", err)
-        if (toXposedBridge) XposedBridge.log(err)
-    }
+    fun w(vararg args: Any?, err: Throwable? = null) = log(Level.WARN, args, err)
 
-    fun i(vararg args: Any?) {
-        val message = args.joinToString(" ") { "$it" }
-        if (toLogcat) Log.i(TAG, message)
-        if (toXposedBridge) XposedBridge.log(message)
-    }
-
-    fun w(message: Any?, err: Throwable? = null) {
-        if (toLogcat) Log.w(TAG, "$message", err)
-        if (toXposedBridge) {
-            XposedBridge.log("$message")
-            err?.let { XposedBridge.log(it) }
-        }
-    }
-
-    fun w(err: Throwable) {
-        if (toLogcat) Log.w(TAG, "", err)
-        if (toXposedBridge) XposedBridge.log(err)
-    }
-
-    fun w(vararg args: Any?) {
-        val message = args.joinToString(" ") { "$it" }
-        if (toLogcat) Log.w(TAG, message)
-        if (toXposedBridge) XposedBridge.log(message)
-    }
-
-    fun e(message: Any?, err: Throwable? = null) {
-        if (toLogcat) Log.e(TAG, "$message", err)
-        if (toXposedBridge) {
-            XposedBridge.log("$message")
-            err?.let { XposedBridge.log(it) }
-        }
-    }
-
-    fun e(err: Throwable) {
-        if (toLogcat) Log.e(TAG, "", err)
-        if (toXposedBridge) XposedBridge.log(err)
-    }
-
-    fun e(vararg args: Any?) {
-        val message = args.joinToString(" ") { "$it" }
-        if (toLogcat) Log.e(TAG, message)
-        if (toXposedBridge) XposedBridge.log(message)
-    }
+    fun e(vararg args: Any?, err: Throwable? = null) = log(Level.ERROR, args, err)
 }
