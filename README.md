@@ -19,6 +19,12 @@ include(
 )
 ```
 
+* In project `build.gradle.kts`
+
+```kotlin
+val applicationModuleName by extra(":app")  // replace with your app module name 
+```
+
 * In module `build.gradle.kts`
 
 ```kotlin
