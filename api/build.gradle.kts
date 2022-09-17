@@ -11,6 +11,8 @@ val androidTargetCompatibility: JavaVersion by project.parent!!.extra
 val kotlinJvmTarget: String by project.parent!!.extra
 
 android {
+    namespace = "mufanc.easyhook.api"
+
     compileSdk = androidCompileSdkVersion
 
     defaultConfig {

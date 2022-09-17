@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+    namespace = "mufanc.easyhook.demo"
     compileSdk = 32
 
     defaultConfig {
@@ -37,11 +38,9 @@ android {
 }
 
 dependencies {
-    compileOnly("de.robv.android.xposed:api:82")
-    compileOnly("de.robv.android.xposed:api:82:sources")
     implementation(project(":api"))
-
     ksp(project(":ksp-xposed"))
+    compileOnly("de.robv.android.xposed:api:82")
 
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.5.0")
